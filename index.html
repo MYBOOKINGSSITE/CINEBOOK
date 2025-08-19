@@ -92,60 +92,29 @@
   <script>
   // ======== CONFIG START ========
   // Paste your default city below (optional)
-  const DEFAULT_CITY = "Ahmedabad";
-
-  // If your affiliate network gives a "deep link" wrapper, set it here.
-  // Example (Impact): https://YOURPARTNERLINK.abcdefg.net/c/XXXXXX/XXXXXX/1234?subId={YOURSUB}&u=
-  // Keep it blank "" if you will paste full affiliate links per item.
-  const AFFILIATE_WRAPPER = ""; // leave "" to use item.link as-is
-
-  // ======== SAMPLE DATA ========
-  // Edit/replace this data. For each item, you can either:
-  // 1) Put a FULL BookMyShow affiliate deep link in `link`, OR
-  // 2) Put a normal BMS URL in `link` and use AFFILIATE_WRAPPER (above) which will be prepended and URL-encoded automatically.
-  const CITIES = ["Ahmedabad","Surat","Vadodara","Rajkot","Mumbai","Delhi","Bengaluru"];
   const ITEMS = [
-    {
-      id: "stree-2",
-      title: "Stree 2",
+  {
+      id: "coolie-2025",
+      title: "Coolie",
       type: "Movie",
       rating: 4.6,
-      poster: "https://img.freepik.com/free-photo/cinema-concept-with-clapperboard_23-2147847084.jpg",
-      cities: ["Ahmedabad","Surat","Vadodara","Rajkot","Mumbai"],
-      releaseDate: "2024-08-15",
-      link: "https://in.bookmyshow.com/buytickets/stree-2-mumbai/movie-mumbai-ET00393212-MT/20240819"
-    },
-    {
-      id: "deadpool-wolverine",
-      title: "Deadpool & Wolverine",
+      poster: "https://in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600/et00393212-jfdgzypscw-portrait.jpg", 
+      cities: ["Ahmedabad","Surat","Delhi","Mumbai","Bangalore"],
+      releaseDate: "2025-08-15",
+      link: "https://YOUR_AFFILIATE_LINK_HERE"
+  },
+  {
+      id: "war-2",
+      title: "War 2",
       type: "Movie",
-      rating: 4.5,
-      poster: "https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=1200&auto=format&fit=crop",
-      cities: ["Ahmedabad","Surat","Vadodara","Rajkot","Delhi","Mumbai","Bengaluru"],
-      releaseDate: "2024-07-26",
-      link: "https://in.bookmyshow.com/explore/movies-deadpool-wolverine"
-    },
-    {
-      id: "garba-night",
-      title: "Navratri Garba Night",
-      type: "Event",
       rating: 4.8,
-      poster: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
-      cities: ["Ahmedabad","Surat","Vadodara","Rajkot"],
-      releaseDate: "2025-10-01",
-      link: "https://in.bookmyshow.com/explore/events-navratri-garba-night"
-    },
-    {
-      id: "pushpa-2",
-      title: "Pushpa 2: The Rule",
-      type: "Movie",
-      rating: 4.7,
-      poster: "https://images.unsplash.com/photo-1518893494013-481c1d8ed3fd?q=80&w=1200&auto=format&fit=crop",
-      cities: ["Ahmedabad","Surat","Vadodara","Rajkot","Mumbai","Bengaluru"],
-      releaseDate: "2024-12-06",
-      link: "https://in.bookmyshow.com/explore/movies-pushpa-2"
-    }
-  ];
+      poster: "https://in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600/et00390230-lkpvgytxhe-portrait.jpg", 
+      cities: ["Ahmedabad","Rajkot","Vadodara","Hyderabad","Kolkata"],
+      releaseDate: "2025-08-14",
+      link: "https://YOUR_AFFILIATE_LINK_HERE"
+  }
+];
+
   // ======== CONFIG END =========
 
   function wrapAffiliate(url){
