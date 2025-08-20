@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CineBook — Now Showing</title>
+  <meta name="description" content="CineBook: BookMyShow affiliate landing page for current movies."/>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect rx='20' ry='20' width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='58' text-anchor='middle' font-size='56' fill='white' font-family='Arial'%3ECB%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --bg:#0f0f12; --card:#18181d; --text:#f8fafc; --accent:#e50914; --muted:#9ca3af;
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
+    header{ padding:18px 20px; background:linear-gradient(90deg,#1f2026,#15161a); position:sticky; top:0; z-index:10; border-bottom:1px solid #222; }
+    .brand{ font-weight:800; letter-spacing:.5px; font-size:24px; }
+    .wrap{ max-width:1100px; margin:0 auto; padding:20px; }
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; margin:8px 0 18px; }
+    input, select{ background:#0f1115; color:var(--text); border:1px solid #2a2a33; padding:10px 12px; border-radius:10px; outline:none; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap:18px; }
+    .card{ background:var(--card); border:1px solid #22232b; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 10px 20px rgba(0,0,0,.25); }
+    .poster{ width:100%; aspect-ratio:2/3; object-fit:cover; background:#0d0d10; }
+    .meta{ padding:14px; display:flex; flex-direction:column; gap:8px; }
+    .title{ font-size:18px; font-weight:700; line-height:1.2; }
+    .sub{ color:var(--muted); font-size:14px; }
+    .cta{ margin-top:auto; display:flex; gap:10px; }
+    .btn{ display:inline-block; padding:10px 12px; border-radius:12px; text-decoration:none; font-weight:700; text-align:center; border:1px solid transparent; }
+    .btn.primary{ background:var(--accent); color:white; }
+    .btn.secondary{ background:#0f1115; color:#e5e7eb; border-color:#2a2a33; }
+    footer{ text-align:center; color:#9aa0a6; font-size:12px; padding:24px 0 40px; }
+    .badge{ font-size:12px; padding:4px 8px; border-radius:999px; background:#0f1115; border:1px solid #2a2a33; color:#e5e7eb; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div class="brand">🎬 CineBook</div>
+      <div class="controls">
+        <select id="city">
+          <option value="">All Cities</option>
+          <option>Ahmedabad</option><option>Surat</option><option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+        </select>
+        <input id="q" placeholder="Search movie..." />
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="grid" class="grid"></div>
+    <footer>© 2025 CineBook • Update items inside <code>index.html</code> only. Replace affiliate wrapper below.</footer>
+  </main>
+
+  <script>
+    // ====== CONFIG: Put your affiliate wrapper here (keep trailing '=') ======
+    // Example Impact wrapper: https://bookmyshow.go2cloud.org/aff_c?offer_id=123&aff_id=456&url=
+    const AFFILIATE_WRAPPER = ""; // <-- paste your wrapper here. Leave empty to use plain links.
+
+    // ====== DATA: Edit/extend this list when movies change ======
+    const ITEMS = [
+      {
+        id: "coolie-2025",
+        title: "Coolie",
+        type: "Movie",
+        releaseDate: "2025-08-30",
+        rating: 4.6,
+        cities: ["Ahmedabad","Surat","Mumbai","Delhi","Bengaluru"],
+        poster: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iOTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjYzIxODViIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZmlsbD0id2hpdGUiPkNPT0xJRSBQT1NURVI8L3RleHQ+Cjwvc3ZnPg==",
+        baseLink: "https://in.bookmyshow.com/"
+      },
+      {
+        id: "war-2-2025",
+        title: "War 2",
+        type: "Movie",
+        releaseDate: "2025-08-15",
+        rating: 4.8,
+        cities: ["Ahmedabad","Surat","Mumbai","Delhi","Bengaluru"],
+        poster: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iOTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTk3NmQyIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZmlsbD0id2hpdGUiPldBUiAyIFBPU1RFUjwvdGV4dD4KPC9zdmc+",
+        baseLink: "https://in.bookmyshow.com/"
+      }
+    ];
+
+    // ====== RENDER ======
+    const grid = document.getElementById('grid');
+    const q = document.getElementById('q');
+    const city = document.getElementById('city');
+
+    function wrapAffiliate(url) {
+      if (!AFFILIATE_WRAPPER) return url;
+      const encoded = encodeURIComponent(url);
+      return AFFILIATE_WRAPPER + encoded;
+    }
+
+    function render() {
+      const term = (q.value || "").toLowerCase();
+      const cityVal = city.value;
+      grid.innerHTML = "";
+      ITEMS
+        .filter(m => !term || m.title.toLowerCase().includes(term))
+        .filter(m => !cityVal || (m.cities||[]).includes(cityVal))
+        .forEach(m => {
+          const card = document.createElement('article');
+          card.className = 'card';
+          card.innerHTML = `
+            <img class="poster" src="${m.poster}" alt="${m.title} poster" loading="lazy">
+            <div class="meta">
+              <div class="title">${m.title}</div>
+              <div class="sub">
+                <span class="badge">⭐ ${m.rating}</span>
+                &nbsp; • &nbsp;
+                <span>${new Date(m.releaseDate).toLocaleDateString(undefined, { day:'2-digit', month:'short', year:'numeric' })}</span>
+              </div>
+              <div class="cta">
+                <a class="btn primary" target="_blank" href="${wrapAffiliate(m.baseLink)}">Book on BookMyShow</a>
+                <a class="btn secondary" href="https://wa.me/?text=${encodeURIComponent('Watch '+m.title+' — '+wrapAffiliate(m.baseLink))}" target="_blank">Share</a>
+              </div>
+            </div>`;
+          grid.appendChild(card);
+        });
+    }
+
+    q.addEventListener('input', render);
+    city.addEventListener('change', render);
+    render();
+  </script>
+</body>
+</html>
