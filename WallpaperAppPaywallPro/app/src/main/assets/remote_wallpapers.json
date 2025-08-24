@@ -1,0 +1,26 @@
+{
+  "wallpapers": [
+    {
+      "url": "asset://wp_01.png",
+      "category": "Nature",
+      "created": 1724400000,
+      "trend": 50
+    },
+    {
+      "url": "asset://wp_02.png",
+      "category": "Cars",
+      "created": 1724300000,
+      "trend": 60
+    },
+    {
+      "category": "Quotes",
+      "text": "Work hard in silence.",
+      "author": "\u2014",
+      "bg": "#111827",
+      "fg": "#FFFFFF",
+      "lang": "en",
+      "created": 1724200000,
+      "trend": 95
+    }
+  ]
+}
