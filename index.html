@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QuickMyTickets — Book Movies, Events & More</title>
+  <meta name="description" content="A fast, clean ticket-booking experience for movies and events." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>🎟️</text></svg>">
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --card:#121826;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --brand:#ef4444;
+      --brand-2:#22c55e;
+      --accent:#3b82f6;
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --border:#1f2937;
+      --chip:#0f172a;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1100px;margin:0 auto;padding:16px}
+    .row{display:grid;gap:16px}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .grid-4{grid-template-columns:repeat(4,1fr)}
+    @media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:700px){.grid-3{grid-template-columns:repeat(1,1fr)} .grid-4{grid-template-columns:repeat(1,1fr)}}
+    header{position:sticky;top:0;z-index:30;background:rgba(11,15,23,.75);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+    .nav{display:flex;align-items:center;gap:12px;padding:8px 16px}
+    .brand{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.2px}
+    .brand .logo{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--brand),#f97316);display:grid;place-items:center;box-shadow:0 6px 20px rgba(239,68,68,.3)}
+    .city{margin-left:auto;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+    .city select,.search input{background:transparent;color:var(--text);border:none;outline:none}
+    .search{flex:1;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);padding:6px 10px;border-radius:12px}
+    .search input{width:100%}
+    .btn{background:var(--accent);color:white;border:none;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid var(--border);}
+    .btn.warn{background:var(--warn)}
+    .btn.ok{background:var(--ok)}
+    .btn.danger{background:var(--danger)}
+    .chip{display:inline-flex;align-items:center;gap:6px;background:var(--chip);border:1px solid var(--border);padding:6px 10px;border-radius:999px;color:var(--muted);font-size:12px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 0 8px}
+    .card{background:linear-gradient(180deg,var(--card),#0c1220);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+    .thumb{aspect-ratio:16/9;background:#111;display:block;object-fit:cover;width:100%}
+    .p16{padding:16px}
+    .muted{color:var(--muted)}
+    .price{font-weight:700}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap}
+    .rowbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .seatmap{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;justify-items:center;margin:16px 0}
+    .seat{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);display:grid;place-items:center;cursor:pointer;background:#0d1526}
+    .seat.vip{border-color:#d946ef}
+    .seat.gold{border-color:#f59e0b}
+    .seat.silver{border-color:#60a5fa}
+    .seat.booked{background:#111827;color:#374151;border-color:#1f2937;cursor:not-allowed}
+    .seat.sel{outline:2px solid #22c55e;outline-offset:1px}
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;background:#0b1222;border:1px solid var(--border);border-radius:6px;padding:2px 6px;font-size:12px}
+    .hr{height:1px;background:var(--border);margin:12px 0}
+    .pill{padding:2px 8px;border:1px solid var(--border);border-radius:999px}
+    .footer{padding:32px 16px;color:var(--muted);text-align:center;border-top:1px solid var(--border);margin-top:24px}
+    .toast{position:fixed;bottom:16px;right:16px;background:#0b1222;border:1px solid var(--border);padding:10px 12px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
+    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.6);padding:16px}
+    .dialog{background:var(--card);border:1px solid var(--border);border-radius:14px;max-width:520px;width:100%}
+    .dialog .head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding:12px 16px}
+    .dialog .body{padding:16px}
+    .kbdgrid{display:grid;grid-template-columns:1fr auto;gap:8px}
+    .tag{font-size:12px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav container">
+      <div class="brand">
+        <div class="logo">🎟️</div>
+        <div>QuickMyTickets</div>
+      </div>
+      <div class="search">
+        <span>🔎</span>
+        <input id="q" placeholder="Search movies, events, venues..." />
+      </div>
+      <div class="city">
+        <span>📍</span>
+        <select id="citySel"></select>
+      </div>
+      <button class="btn" id="viewCartBtn">Cart</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-title">
+      <h2>Now Showing</h2>
+      <div class="toolbar">
+        <button class="btn ghost" id="adminBtn">＋ Add Event</button>
+        <span class="chip">City: <b id="cityChip" style="margin-left:6px;"></b></span>
+      </div>
+    </div>
+
+    <div class="row grid-4" id="cards"></div>
+
+    <div class="section-title">
+      <h2>Recommended For You</h2>
+      <div class="toolbar">
+        <span class="chip">Personalized</span>
+      </div>
+    </div>
+    <div class="row grid-4" id="recos"></div>
+
+    <div class="footer">
+      <div>© <span id="yr"></span> QuickMyTickets — Demo project (no real payments).</div>
+      <div class="muted" style="margin-top:6px">Tip: Use promo code <span class="kbd">WELCOME50</span> (50% off, max ₹150).</div>
+    </div>
+  </main>
+
+  <!-- Modal: Details / Booking -->
+  <div class="modal" id="detailModal" aria-hidden="true">
+    <div class="dialog">
+      <div class="head">
+        <div class="rowbar">
+          <strong id="dTitle">Event</strong>
+          <span class="tag" id="dCert"></span>
+        </div>
+        <button class="btn ghost" id="closeDetail">✕</button>
+      </div>
+      <div class="body">
+        <div id="dMeta" class="muted"></div>
+        <div class="hr"></div>
+        <div class="rowbar" id="showtimeBar"></div>
+        <div class="hr"></div>
+        <div>
+          <div class="rowbar">
+            <strong>Choose Seats</strong>
+            <span class="muted" id="legend"></span>
+          </div>
+          <div id="seatWrap"></div>
+          <div class="rowbar" style="justify-content:space-between;margin-top:8px">
+            <div class="muted">Selected: <span id="selCount">0</span> • Total: <b id="selTotal">₹0</b></div>
+            <button class="btn ok" id="addToCart">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cart / Checkout -->
+  <div class="modal" id="cartModal" aria-hidden="true">
+    <div class="dialog">
+      <div class="head">
+        <strong>Cart & Checkout</strong>
+        <button class="btn ghost" id="closeCart">✕</button>
+      </div>
+      <div class="body">
+        <div id="cartList"></div>
+        <div class="hr"></div>
+        <div class="kbdgrid">
+          <input id="promo" placeholder="Promo code e.g. WELCOME50" />
+          <button class="btn" id="applyPromo">Apply</button>
+        </div>
+        <div id="bill"></div>
+        <div class="rowbar" style="margin-top:12px;justify-content:space-between">
+          <div class="muted">Payment method:
+            <select id="payMethod">
+              <option>UPI</option><option>Card</option><option>Netbanking</option>
+            </select>
+          </div>
+          <button class="btn ok" id="payNow">Pay & Book</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Admin -->
+  <div class="modal" id="adminModal" aria-hidden="true">
+    <div class="dialog">
+      <div class="head">
+        <strong>Add Movie/Event</strong>
+        <button class="btn ghost" id="closeAdmin">✕</button>
+      </div>
+      <div class="body">
+        <div class="row grid-3">
+          <input id="aTitle" placeholder="Title*" />
+          <input id="aLang" placeholder="Language (e.g. Hindi)" />
+          <input id="aCert" placeholder="Cert (U/A, A, U)" />
+          <input id="aDur" placeholder="Duration (min)" />
+          <input id="aGenre" placeholder="Genre (Action, Comedy)" />
+          <input id="aPoster" placeholder="Poster URL (optional)" />
+        </div>
+        <div class="hr"></div>
+        <div class="rowbar" style="justify-content:space-between">
+          <div class="muted">Pricing (per seat): VIP ₹<span id="pVip">350</span>, Gold ₹<span id="pGold">220</span>, Silver ₹<span id="pSilver">150</span></div>
+          <button class="btn" id="addEvent">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Ticket -->
+  <div class="modal" id="ticketModal" aria-hidden="true">
+    <div class="dialog">
+      <div class="head">
+        <strong>Your Ticket</strong>
+        <button class="btn ghost" id="closeTicket">✕</button>
+      </div>
+      <div class="body" id="ticketBody"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Utilities ----
+    const $ = (q)=>document.querySelector(q);
+    const $$ = (q)=>document.querySelectorAll(q);
+    const fmt = (n)=>"₹"+n.toLocaleString("en-IN");
+    const uid = (p="")=> p + Math.random().toString(36).slice(2,9);
+    const todayISO = ()=> new Date().toISOString().slice(0,10);
+    const persist = (k,v)=> localStorage.setItem(k, JSON.stringify(v));
+    const read = (k,def)=> JSON.parse(localStorage.getItem(k) || JSON.stringify(def));
+
+    // ---- Seed Data ----
+    const defaultCities = ["Ahmedabad","Surat","Vadodara","Rajkot","Gandhinagar","Mumbai","Delhi","Bengaluru","Hyderabad","Chennai"];
+    const sample = [
+      {id:uid("ev_"),title:"Action Hero Returns",lang:"Hindi",cert:"U/A",dur:138,genre:"Action • Thriller",poster:"https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?q=80&w=1200&auto=format&fit=crop"},
+      {id:uid("ev_"),title:"Laugh Out Loud 3",lang:"Hindi",cert:"U",dur:127,genre:"Comedy",poster:"https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?q=80&w=1200&auto=format&fit=crop"},
+      {id:uid("ev_"),title:"Space Odyssey 2040",lang:"English",cert:"U/A",dur:155,genre:"Sci‑Fi • Adventure",poster:"https://images.unsplash.com/photo-1505685296765-3a2736de412f?q=80&w=1200&auto=format&fit=crop"},
+      {id:uid("ev_"),title:"Garba Night Live",lang:"Gujarati",cert:"U",dur:180,genre:"Live • Music",poster:"https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200&auto=format&fit=crop"},
+    ];
+
+    const base = read("events", null) ?? sample;
+    persist("events", base);
+    const cities = read("cities", null) ?? defaultCities;
+    persist("cities", cities);
+    const cart = read("cart", []);
+    const bookings = read("bookings", []);
+
+    // ---- City & Search ----
+    function initCity(){
+      const sel = $("#citySel");
+      sel.innerHTML = cities.map(c=>`<option>${c}</option>`).join("");
+      const saved = read("city","Ahmedabad");
+      sel.value = saved;
+      $("#cityChip").textContent = sel.value;
+      sel.onchange = ()=>{
+        persist("city", sel.value);
+        $("#cityChip").textContent = sel.value;
+        paint();
+        toast("City updated to " + sel.value);
+      };
+    }
+
+    function initSearch(){
+      $("#q").oninput = ()=> paint();
+    }
+
+    // ---- Render cards ----
+    function paint(){
+      const q = $("#q").value.trim().toLowerCase();
+      const list = read("events", []);
+      const filtered = q ? list.filter(x=>(x.title+" "+x.lang+" "+x.genre).toLowerCase().includes(q)) : list;
+      $("#cards").innerHTML = filtered.map(card).join("");
+      $("#recos").innerHTML = list.slice().sort(()=>Math.random()-0.5).slice(0,4).map(card).join("");
+      $$(".bookBtn").forEach(b=> b.onclick = ()=> openDetail(b.dataset.id));
+    }
+
+    function card(x){
+      return `<div class="card">
+        <img class="thumb" src="${x.poster||""}" alt="${x.title}" onerror="this.src='https://picsum.photos/seed/${x.id}/600/338'"/>
+        <div class="p16">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <div>
+              <div style="font-weight:700">${x.title}</div>
+              <div class="muted" style="font-size:13px">${x.lang} • ${x.genre} • ${x.cert}</div>
+            </div>
+            <button class="btn bookBtn" data-id="${x.id}">Book</button>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // ---- Detail / Seat map ----
+    let currentEvent = null;
+    let currentShow = null;
+    let selectedSeats = [];
+    function openDetail(id){
+      currentEvent = read("events", []).find(e=>e.id===id);
+      $("#dTitle").textContent = currentEvent.title;
+      $("#dCert").textContent = currentEvent.cert;
+      $("#dMeta").textContent = `${currentEvent.lang} • ${currentEvent.genre} • ${currentEvent.dur} min`;
+
+      // showtimes (today + next 3 days)
+      const days = [...Array(4)].map((_,i)=>{
+        const d = new Date(); d.setDate(d.getDate()+i);
+        const day = d.toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'});
+        const times = ["10:30","13:15","16:45","20:00","22:30"];
+        return {date:d.toISOString().slice(0,10), label:day, times};
+      });
+      $("#showtimeBar").innerHTML = days.map(d=>`<div class="rowbar">
+        <div class="chip">${d.label}</div>
+        ${d.times.map(t=>`<button class="btn ghost stBtn" data-date="${d.date}" data-time="${t}">${t}</button>`).join("")}
+      </div>`).join("");
+      $$(".stBtn").forEach(b=> b.onclick = ()=> chooseShow(b.dataset.date, b.dataset.time));
+
+      // default seat map (until show picked)
+      $("#seatWrap").innerHTML = `<div class="muted">Select a showtime to load seats.</div>`;
+      $("#legend").textContent = "";
+      $("#selCount").textContent = "0"; $("#selTotal").textContent = "₹0";
+      selectedSeats = [];
+      showModal("#detailModal", true);
+    }
+
+    function chooseShow(date, time){
+      currentShow = {date, time, id: uid("show_")};
+      // generate seat map 12x10 with zones: 2 rows VIP, 3 rows Gold, 5 rows Silver
+      const zones = [
+        {name:"VIP", rows:[1,2], price:350, cls:"vip"},
+        {name:"Gold", rows:[3,4,5], price:220, cls:"gold"},
+        {name:"Silver", rows:[6,7,8,9,10], price:150, cls:"silver"},
+      ];
+      const booked = randomBooked();
+      const wrap = document.createElement("div");
+      wrap.innerHTML = zones.map(z=> `<div class="rowbar"><strong>${z.name}</strong><span class="muted">₹${z.price}</span></div>
+        <div class="seatmap">${renderRows(z.rows, z.cls, booked)}</div>`).join("");
+      $("#seatWrap").innerHTML = ""; $("#seatWrap").appendChild(wrap);
+      $("#legend").textContent = "Tap seats to select. Green = selected.";
+      selectedSeats = [];
+      bindSeats();
+    }
+
+    function renderRows(rows, cls, bookedSet){
+      const cols = 12;
+      let html = "";
+      for (let r of rows){
+        for(let c=1;c<=cols;c++){
+          const code = String.fromCharCode(64+r)+c; // A1..
+          const isBooked = bookedSet.has(code);
+          html += `<div class="seat ${cls} ${isBooked?"booked":""}" data-seat="${code}" title="${code}">${c}</div>`;
+        }
+      }
+      return html;
+    }
+
+    function randomBooked(){
+      // stable per day+time+event
+      const seed = (currentEvent.id + currentShow.date + currentShow.time).split("").reduce((a,ch)=>a+ch.charCodeAt(0),0);
+      const rng = mulberry32(seed);
+      const set = new Set();
+      const total = 12*10;
+      const n = Math.floor(rng()*total*0.2) + 10; // 10..~34
+      while(set.size < n){
+        const r = Math.floor(rng()*10)+1;
+        const c = Math.floor(rng()*12)+1;
+        set.add(String.fromCharCode(64+r)+c);
+      }
+      return set;
+    }
+    function mulberry32(a){return function(){let t = a += 0x6D2B79F5;t = Math.imul(t ^ t >>> 15, t | 1);t ^= t + Math.imul(t ^ t >>> 7, t | 61);return ((t ^ t >>> 14) >>> 0) / 4294967296;}}
+
+    function bindSeats(){
+      $$(".seat").forEach(s => {
+        if(s.classList.contains("booked")) return;
+        s.onclick = ()=>{
+          const code = s.dataset.seat;
+          const idx = selectedSeats.indexOf(code);
+          if(idx>=0){ selectedSeats.splice(idx,1); s.classList.remove("sel"); }
+          else { selectedSeats.push(code); s.classList.add("sel"); }
+          updateSelectionSummary();
+        }
+      });
+      $("#addToCart").onclick = addSelectionToCart;
+      updateSelectionSummary();
+    }
+
+    function seatPrice(seat){
+      const r = seat.charCodeAt(0)-64; // A=1...
+      if(r<=2) return 350;
+      if(r<=5) return 220;
+      return 150;
+    }
+
+    function updateSelectionSummary(){
+      const total = selectedSeats.reduce((a,s)=>a+seatPrice(s),0);
+      $("#selCount").textContent = selectedSeats.length;
+      $("#selTotal").textContent = fmt(total);
+    }
+
+    function addSelectionToCart(){
+      if(!currentEvent || !currentShow || selectedSeats.length===0){
+        toast("Pick a showtime and at least 1 seat.");
+        return;
+      }
+      const item = {
+        id: uid("ci_"),
+        eventId: currentEvent.id,
+        title: currentEvent.title,
+        city: $("#citySel").value,
+        date: currentShow.date,
+        time: currentShow.time,
+        seats: [...selectedSeats],
+        price: selectedSeats.reduce((a,s)=>a+seatPrice(s),0),
+        createdAt: new Date().toISOString()
+      };
+      const list = read("cart", []);
+      list.push(item);
+      persist("cart", list);
+      toast("Added to cart.");
+      showModal("#detailModal", false);
+      openCart();
+    }
+
+    // ---- Cart / Billing ----
+    function openCart(){
+      paintCart();
+      showModal("#cartModal", true);
+    }
+    function paintCart(){
+      const list = read("cart", []);
+      if(list.length===0){
+        $("#cartList").innerHTML = `<div class="muted">Cart is empty.</div>`;
+        $("#bill").innerHTML = "";
+        return;
+      }
+      $("#cartList").innerHTML = list.map(it=>`<div class="card p16" style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:700">${it.title}</div>
+            <div class="muted">${it.city} • ${it.date} • ${it.time}</div>
+            <div class="muted">Seats: ${it.seats.join(", ")}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="price">${fmt(it.price)}</div>
+            <button class="btn danger" onclick="removeFromCart('${it.id}')">Remove</button>
+          </div>
+        </div>
+      </div>`).join("");
+
+      const subtotal = list.reduce((a,x)=>a+x.price,0);
+      const fee = Math.round(subtotal * 0.08); // 8% convenience
+      const gst = Math.round(fee * 0.18); // 18% on fee
+      const promo = (read("promo", null) || {code:null, off:0});
+      const totalBefore = subtotal + fee + gst;
+      const discount = Math.min(promo.off ? Math.round(totalBefore*0.5) : 0, 150);
+      const total = totalBefore - discount;
+
+      $("#bill").innerHTML = `<div class="rowbar" style="justify-content:space-between;margin-top:12px">
+        <div class="muted">Subtotal</div><div>${fmt(subtotal)}</div>
+      </div>
+      <div class="rowbar" style="justify-content:space-between">
+        <div class="muted">Convenience fee</div><div>${fmt(fee)}</div>
+      </div>
+      <div class="rowbar" style="justify-content:space-between">
+        <div class="muted">GST (18% of fee)</div><div>${fmt(gst)}</div>
+      </div>
+      <div class="rowbar" style="justify-content:space-between">
+        <div class="muted">Promo (${promo.code||"—"})</div><div>− ${fmt(discount)}</div>
+      </div>
+      <div class="hr"></div>
+      <div class="rowbar" style="justify-content:space-between">
+        <strong>Payable</strong><strong>${fmt(total)}</strong>
+      </div>`;
+    }
+
+    function removeFromCart(id){
+      const list = read("cart", []);
+      const next = list.filter(x=>x.id!==id);
+      persist("cart", next);
+      toast("Removed.");
+      paintCart();
+    }
+
+    $("#applyPromo").onclick = ()=>{
+      const code = $("#promo").value.trim().toUpperCase();
+      if(code==="WELCOME50"){
+        persist("promo",{code,off:1});
+        toast("Promo applied!");
+      } else {
+        persist("promo",{code:null,off:0});
+        toast("Invalid promo.");
+      }
+      paintCart();
+    };
+
+    $("#payNow").onclick = ()=>{
+      const list = read("cart", []);
+      if(list.length===0){ toast("Cart empty."); return; }
+      const bookingId = uid("BKT");
+      const payload = {id:bookingId,items:list,ts:new Date().toISOString(),method:$("#payMethod").value,city:$("#citySel").value};
+      const all = read("bookings", []);
+      all.push(payload); persist("bookings", all);
+      persist("cart", []); persist("promo",{code:null,off:0});
+      showTicket(payload);
+      showModal("#cartModal", false);
+    };
+
+    function showTicket(b){
+      const total = b.items.reduce((a,x)=>a+x.price,0);
+      const html = `<div class="rowbar" style="justify-content:space-between">
+        <div>
+          <div class="muted">Booking ID</div>
+          <div class="kbd">${b.id}</div>
+        </div>
+        <div class="muted">Method: ${b.method}</div>
+      </div>
+      <div class="hr"></div>
+      ${b.items.map(x=>`<div class="rowbar" style="justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700">${x.title}</div>
+          <div class="muted">${x.city} • ${x.date} • ${x.time}</div>
+          <div class="muted">Seats: ${x.seats.join(", ")}</div>
+        </div>
+        <div class="price">${fmt(x.price)}</div>
+      </div>`).join("")}
+      <div class="hr"></div>
+      <div class="rowbar" style="justify-content:space-between">
+        <strong>Total Paid</strong><strong>${fmt(total)}</strong>
+      </div>
+      <div style="margin-top:12px" class="muted">Show this ticket QR at entry:</div>
+      <canvas id="qr" width="180" height="180" style="background:#0b1222;border:1px solid var(--border);border-radius:10px"></canvas>
+      <div class="rowbar" style="margin-top:12px;justify-content:space-between">
+        <button class="btn ghost" id="dlTicket">Download</button>
+        <button class="btn ok" id="closeTicket2">Done</button>
+      </div>`;
+      $("#ticketBody").innerHTML = html;
+      drawQR("#qr", b.id);
+      showModal("#ticketModal", true);
+      $("#closeTicket2").onclick = ()=> showModal("#ticketModal", false);
+      $("#dlTicket").onclick = ()=> downloadTicketPNG();
+    }
+
+    function drawQR(sel, text){
+      // simple block QR-like pattern (not a standard QR, just for demo)
+      const c = $(sel), g = c.getContext("2d");
+      g.fillStyle = "#0b1222"; g.fillRect(0,0,c.width,c.height);
+      g.fillStyle = "#e5e7eb";
+      const rng = mulberry32(text.split("").reduce((a,ch)=>a+ch.charCodeAt(0),0));
+      const n=18, s=c.width/n;
+      for(let y=0;y<n;y++){
+        for(let x=0;x<n;x++){
+          if(rng()>0.6){ g.fillRect(x*s+2,y*s+2,s-4,s-4); }
+        }
+      }
+    }
+
+    function downloadTicketPNG(){
+      const c = $("#qr");
+      const a = document.createElement("a");
+      a.download = "ticket.png";
+      a.href = c.toDataURL("image/png");
+      a.click();
+    }
+
+    // ---- Admin ----
+    $("#adminBtn").onclick = ()=> showModal("#adminModal", true);
+    $("#addEvent").onclick = ()=>{
+      const t = $("#aTitle").value.trim();
+      if(!t){ toast("Title required."); return; }
+      const e = {
+        id: uid("ev_"),
+        title: t,
+        lang: $("#aLang").value || "Hindi",
+        cert: $("#aCert").value || "U/A",
+        dur: parseInt($("#aDur").value||"120",10),
+        genre: $("#aGenre").value || "Drama",
+        poster: $("#aPoster").value || ""
+      };
+      const list = read("events", []);
+      list.unshift(e);
+      persist("events", list);
+      toast("Event added.");
+      paint();
+      showModal("#adminModal", false);
+      $("#aTitle").value = $("#aLang").value = $("#aCert").value = $("#aDur").value = $("#aGenre").value = $("#aPoster").value = "";
+    };
+
+    // ---- Modals / Toast ----
+    function showModal(q, on){
+      const m = $(q);
+      m.style.display = on ? "grid" : "none";
+      m.setAttribute("aria-hidden", on ? "false" : "true");
+    }
+    $("#closeDetail").onclick = ()=> showModal("#detailModal", false);
+    $("#closeCart").onclick = ()=> showModal("#cartModal", false);
+    $("#closeAdmin").onclick = ()=> showModal("#adminModal", false);
+    $("#closeTicket").onclick = ()=> showModal("#ticketModal", false);
+
+    function toast(msg){
+      const el = $("#toast"); el.textContent = msg; el.style.display = "block";
+      setTimeout(()=> el.style.display = "none", 2000);
+    }
+
+    // ---- Init ----
+    $("#yr").textContent = new Date().getFullYear();
+    $("#viewCartBtn").onclick = openCart;
+    initCity(); initSearch(); paint();
+  </script>
+</body>
+</html>
